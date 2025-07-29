@@ -228,7 +228,7 @@
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h3 class="mb-0"><i class="fa-solid fa-users me-2"></i>Quản lý Nhân sự</h3>
                             <button class="btn btn-primary rounded-pill px-3" data-bs-toggle="modal"
-                                    data-bs-target="#modalEmployee">
+                                    data-bs-target="#modalEmployee" onclick="openAddModal()">
                                 <i class="fa-solid fa-plus"></i> Thêm mới
                             </button>
                         </div>
@@ -241,7 +241,9 @@
                             <div class="col-md-3">
                                 <select class="form-select" id="filterDepartment">
                                     <option value="">Tất cả phòng ban</option>
-                                    <!-- AJAX load phòng ban -->
+                                    <option value="Phòng Nhân sự">Phòng Nhân sự</option>
+                                    <option value="Phòng Kế toán">Phòng Kế toán</option>
+                                    <option value="Phòng Kỹ thuật">Phòng Kỹ thuật</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -261,8 +263,9 @@
                                 </select>
                             </div>
                             <div class="col-md-2">
-                                <button class="btn btn-outline-secondary w-100 rounded-pill"><i
-                                        class="fa-solid fa-filter"></i> Lọc</button>
+                                <button class="btn btn-outline-secondary w-100 rounded-pill" id="btnFilter">
+                                    <i class="fa-solid fa-filter"></i> Lọc
+                                </button>
                             </div>
                         </div>
                         <!-- Table nhân sự -->
@@ -287,8 +290,8 @@
                                 </thead>
                                 <tbody id="employeeTableBody">
                                     <%
-                if (danhSach != null && !danhSach.isEmpty()) {
-                    for (Map<String, Object> nv : danhSach) {
+                                    if (danhSach != null && !danhSach.isEmpty()) {
+                                        for (Map<String, Object> nv : danhSach) {
                                     %>
                                     <tr>
                                         <td><%= nv.get("id") %></td>
@@ -529,6 +532,38 @@
             </div>
         </div>
         <script>
+
+            function openAddModal() {
+                $('#employeeForm')[0].reset();              // Xóa trắng tất cả field
+                $('#empId').val('');                        // Gán ID rỗng => thêm mới
+                $('#avatarPreview').attr('src', 'https://ui-avatars.com/api/?name=Avatar');
+                $('#modalEmployee').modal('show');          // Mở modal
+            }
+
+            //AJAX loc
+            $('#btnFilter').on('click', function () {
+                const keyword = $('#searchName').val();
+                const phongBan = $('#filterDepartment').val();
+                const trangThai = $('#filterStatus').val();
+                const vaiTro = $('#filterRole').val();
+
+                $.ajax({
+                    url: './locNhanvien',
+                    type: 'POST',
+                    data: {
+                        keyword: keyword,
+                        phong_ban: phongBan,
+                        trang_thai: trangThai,
+                        vai_tro: vaiTro
+                    },
+                    success: function (html) {
+                        $('#employeeTableBody').html(html);
+                    },
+                    error: function () {
+                        $('#employeeTableBody').html("<tr><td colspan='13' class='text-danger text-center'>Lỗi khi lọc dữ liệu</td></tr>");
+                    }
+                });
+            });
             // AJAX tìm kiếm realtime
             $('#searchName, #filterDepartment, #filterStatus, #filterRole').on('input change', function () {
                 // TODO: AJAX load lại bảng nhân viên theo filter
@@ -633,28 +668,29 @@
         </script>
         <script>
             $('#employeeForm').on('submit', function (e) {
-                e.preventDefault(); // chặn form submit mặc định
+                e.preventDefault(); // Ngăn form gửi mặc định
 
-                const formData = $(this).serialize(); // lấy toàn bộ dữ liệu form
+                const empId = $('#empId').val(); // Dùng empId để phân biệt thêm/sửa
+                const formData = $(this).serialize(); // Lấy toàn bộ dữ liệu form
+
+                const url = empId ? './dsnhanvien' : './themNhanvien';
 
                 $.ajax({
-                    url: './dsnhanvien', // hoặc URL xử lý bạn đang dùng
+                    url: url,
                     type: 'POST',
                     data: formData,
                     success: function (response) {
-                        // ✅ Cập nhật bảng nếu thành công
                         $('#modalEmployee').modal('hide');
-                        showToast('success', 'Lưu thành công');
-
-                        // Gọi lại load bảng nhân sự hoặc cập nhật dòng tương ứng
-                        // Cách đơn giản: load lại toàn bộ danh sách (AJAX hoặc reload)
-                        location.reload(); // có thể thay bằng AJAX render lại bảng nếu bạn muốn mượt hơn
+                        showToast('success', empId ? 'Cập nhật thành công' : 'Thêm mới thành công');
+                        location.reload(); // Hoặc cập nhật bảng bằng JS
                     },
                     error: function () {
-                        showToast('error', 'Lưu thất bại');
+                        showToast('error', empId ? 'Cập nhật thất bại' : 'Thêm mới thất bại');
                     }
                 });
             });
+
+
 
             function showToast(type, message) {
                 const toastId = type === 'success' ? '#toastSuccess' : '#toastError';
@@ -666,13 +702,4 @@
     </body>
 
 </html>
-// TODO: AJAX load lịch sử thay đổi nhân sự cho modalEmpDetail
 
-// Avatar preview
-$('#empAvatar').on('input', function() {
-$('#avatarPreview').attr('src', $(this).val() || 'https://ui-avatars.com/api/?name=Avatar');
-});
-</script>
-</body>
-
-</html>

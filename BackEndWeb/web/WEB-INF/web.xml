@@ -8,6 +8,14 @@
         <servlet-name>XoaNhanVien</servlet-name>
         <servlet-class>controller.XoaNhanVien</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>themNhanvien</servlet-name>
+        <servlet-class>controller.themNhanvien</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>locNhanvien</servlet-name>
+        <servlet-class>controller.locNhanvien</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>dsnhanvien</servlet-name>
         <url-pattern>/dsnhanvien</url-pattern>
@@ -16,9 +24,18 @@
         <servlet-name>XoaNhanVien</servlet-name>
         <url-pattern>/xoaNhanvien</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>themNhanvien</servlet-name>
+        <url-pattern>/themNhanvien</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>locNhanvien</servlet-name>
+        <url-pattern>/locNhanvien</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
+    
 </web-app>
