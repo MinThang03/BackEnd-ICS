@@ -172,4 +172,105 @@ public class KNCSDL {
         }
         return danhSach;
     }
+
+    public List<Map<String, Object>> getAllTasks() throws SQLException {
+        List<Map<String, Object>> tasks = new ArrayList<>();
+        String sql = "SELECT cv.*, "
+                + "ng1.ho_ten AS nguoi_giao_ten, "
+                + "ng2.ho_ten AS nguoi_nhan_ten, "
+                + "ncv.ten_nhom AS ten_nhom "
+                + "FROM cong_viec cv "
+                + "LEFT JOIN nhanvien ng1 ON cv.nguoi_giao_id = ng1.id "
+                + "LEFT JOIN nhanvien ng2 ON cv.nguoi_nhan_id = ng2.id "
+                + "LEFT JOIN nhom_cong_viec ncv ON cv.nhom_id = ncv.id";
+
+        try ( PreparedStatement stmt = cn.prepareStatement(sql);  ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Map<String, Object> task = new HashMap<>();
+                task.put("id", rs.getInt("id"));
+                task.put("ten_cong_viec", rs.getString("ten_cong_viec"));
+                task.put("mo_ta", rs.getString("mo_ta"));
+                task.put("nguoi_giao_id", rs.getString("nguoi_giao_ten"));
+                task.put("nguoi_nhan_id", rs.getString("nguoi_nhan_ten"));
+                task.put("nhom_id", rs.getString("ten_nhom"));
+                task.put("muc_do_uu_tien", rs.getString("muc_do_uu_tien"));
+                task.put("trang_thai", rs.getString("trang_thai"));
+                task.put("han_hoan_thanh", rs.getDate("han_hoan_thanh"));
+                tasks.add(task);
+            }
+        }
+        return tasks;
+    }
+
+    public ResultSet layNhanVien() throws SQLException {
+        return cn.createStatement().executeQuery("SELECT id, ho_ten FROM nhanvien");
+    }
+
+    public ResultSet layNhomCongViec() throws SQLException {
+        return cn.createStatement().executeQuery("SELECT id, ten_nhom FROM nhom_cong_viec");
+    }
+
+    public int getNhanVienIdByName(String ten) throws SQLException {
+        String sql = "SELECT id FROM nhanvien WHERE ho_ten = ?";
+        try ( PreparedStatement stmt = cn.prepareStatement(sql)) {
+            stmt.setString(1, ten);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+        }
+        return -1; // Không tìm thấy
+    }
+
+    public int getNhomIdByName(String ten) throws SQLException {
+        String sql = "SELECT id FROM nhom_cong_viec WHERE ten_nhom = ?";
+        try ( PreparedStatement stmt = cn.prepareStatement(sql)) {
+            stmt.setString(1, ten);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+        }
+        return -1; // Không tìm thấy
+    }
+
+    public void insertTask(String ten, String moTa, String han, String uuTien,
+            int tenNguoiGiao, int tenNguoiNhan, int tenNhom, String trangThai) throws SQLException {
+
+        String sql = "INSERT INTO cong_viec (ten_cong_viec, mo_ta, han_hoan_thanh, muc_do_uu_tien, nguoi_giao_id, nguoi_nhan_id, nhom_id, trang_thai) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try ( PreparedStatement stmt = cn.prepareStatement(sql)) {
+            stmt.setString(1, ten);
+            stmt.setString(2, moTa);
+            stmt.setDate(3, java.sql.Date.valueOf(han));
+            stmt.setString(4, uuTien);
+            stmt.setInt(5, tenNguoiGiao);
+            stmt.setInt(6, tenNguoiNhan);
+            stmt.setInt(7, tenNhom);
+            stmt.setString(8, trangThai);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void updateTask(int id, String ten, String moTa, String han, String uuTien,
+            int tenNguoiGiao, int tenNguoiNhan, int tenNhom, String trangThai) throws SQLException {
+
+        String sql = "UPDATE cong_viec SET ten_cong_viec=?, mo_ta=?, han_hoan_thanh=?, muc_do_uu_tien=?, "
+                + "nguoi_giao_id=?, nguoi_nhan_id=?, nhom_id=?, trang_thai=? WHERE id=?";
+
+        try ( PreparedStatement stmt = cn.prepareStatement(sql)) {
+            stmt.setString(1, ten);
+            stmt.setString(2, moTa);
+            stmt.setDate(3, java.sql.Date.valueOf(han));
+            stmt.setString(4, uuTien);
+            stmt.setInt(5, tenNguoiGiao);
+            stmt.setInt(6, tenNguoiNhan);
+            stmt.setInt(7, tenNhom);
+            stmt.setString(8, trangThai);
+            stmt.setInt(9, id);
+            stmt.executeUpdate();
+        }
+    }
 }

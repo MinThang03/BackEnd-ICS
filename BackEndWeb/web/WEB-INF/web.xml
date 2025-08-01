@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <web-app version="4.0" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
     <servlet>
         <servlet-name>dsnhanvien</servlet-name>
@@ -16,6 +17,30 @@
         <servlet-name>locNhanvien</servlet-name>
         <servlet-class>controller.locNhanvien</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>dsCongviec</servlet-name>
+        <servlet-class>controller.dsCongviec</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>apiNhanvien</servlet-name>
+        <servlet-class>controller.apiNhanvien</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>apiNhomCV</servlet-name>
+        <servlet-class>controller.apiNhomCV</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>luuCongviec</servlet-name>
+        <servlet-class>controller.luuCongviec</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>themCongviec</servlet-name>
+        <servlet-class>controller.themCongviec</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>suaCongviec</servlet-name>
+        <servlet-class>controller.suaCongviec</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>dsnhanvien</servlet-name>
         <url-pattern>/dsnhanvien</url-pattern>
@@ -32,10 +57,33 @@
         <servlet-name>locNhanvien</servlet-name>
         <url-pattern>/locNhanvien</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>dsCongviec</servlet-name>
+        <url-pattern>/dsCongviec</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>apiNhanvien</servlet-name>
+        <url-pattern>/apiNhanvien</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>apiNhomCV</servlet-name>
+        <url-pattern>/apiNhomCV</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>luuCongviec</servlet-name>
+        <url-pattern>/luuCongviec</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>themCongviec</servlet-name>
+        <url-pattern>/themCongviec</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>suaCongviec</servlet-name>
+        <url-pattern>/suaCongviec</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
-    
 </web-app>
