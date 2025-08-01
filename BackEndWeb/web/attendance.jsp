@@ -184,7 +184,7 @@
                         <a href="./dsnhanvien"><i class="fa-solid fa-users"></i><span>Nhân sự</span></a>
                     </li>
                     <li>
-                        <a href="task.jsp"><i class="fa-solid fa-tasks"></i><span>Công việc</span></a>
+                        <a href="./dsCongviec"><i class="fa-solid fa-tasks"></i><span>Công việc</span></a>
                     </li>
                     <li>
                         <a href="department.jsp"><i class="fa-solid fa-building"></i><span>Phòng ban</span></a>

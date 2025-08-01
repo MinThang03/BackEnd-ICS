@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.*" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -307,7 +306,7 @@
                         <a href="./dsnhanvien"><i class="fa-solid fa-users"></i><span>Nhân sự</span></a>
                     </li>
                     <li>
-                        <a href="./dsCongviec" class="active"><i class="fa-solid fa-tasks"></i><span>Công việc</span></a>
+                        <a href="task.jsp" class="active"><i class="fa-solid fa-tasks"></i><span>Công việc</span></a>
                     </li>
                     <li>
                         <a href="department.jsp"><i class="fa-solid fa-building"></i><span>Phòng ban</span></a>
@@ -350,9 +349,9 @@
                                 <select class="form-select">
                                     <option>Trạng thái</option>
                                     <option value="ChuaBatDau">Chưa bắt đầu</option>
-                                    <option value="Đang thực hiện">Đang thực hiện</option>
-                                    <option value="Đã hoàn thành">Hoàn thành</option>
-                                    <option value="Trễ hạn">Trễ hạn</option>
+                                    <option value="DangThucHien">Đang thực hiện</option>
+                                    <option value="DaHoanThanh">Hoàn thành</option>
+                                    <option value="TreHan">Trễ hạn</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
@@ -361,41 +360,41 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- Kanban board -->
+
                     <%
                         List<Map<String, Object>> taskList = (List<Map<String, Object>>) request.getAttribute("taskList");
 
                         Map<String, String> trangThaiLabels = new LinkedHashMap<>();
-                        trangThaiLabels.put("Chưa bắt đầu", "Chưa bắt đầu");
-                        trangThaiLabels.put("Đang thực hiện", "Đang thực hiện");
-                        trangThaiLabels.put("Đã hoàn thành", "Đã hoàn thành");
-                        trangThaiLabels.put("Trễ hạn", "Trễ hạn");
+                        trangThaiLabels.put("ChuaBatDau", "Chưa bắt đầu");
+                        trangThaiLabels.put("DangThucHien", "Đang làm");
+                        trangThaiLabels.put("DaHoanThanh", "Hoàn thành");
+                        trangThaiLabels.put("TreHan", "Trễ hạn");
 
                         Map<String, String> badgeClass = new HashMap<>();
-                        badgeClass.put("Chưa bắt đầu", "bg-secondary");
-                        badgeClass.put("Đang thực hiện", "bg-warning text-dark");
-                        badgeClass.put("Đã hoàn thành", "bg-success");
-                        badgeClass.put("Trễ hạn", "bg-danger");
+                        badgeClass.put("ChuaBatDau", "bg-secondary");
+                        badgeClass.put("DangThucHien", "bg-warning text-dark");
+                        badgeClass.put("DaHoanThanh", "bg-success");
+                        badgeClass.put("TreHan", "bg-danger");
 
                         Map<String, String> priorityBadge = new HashMap<>();
                         priorityBadge.put("Cao", "bg-danger");
-                        priorityBadge.put("Trung bình", "bg-warning text-dark");
-                        priorityBadge.put("Thấp", "bg-success");
+                        priorityBadge.put("TrungBinh", "bg-warning text-dark");
+                        priorityBadge.put("Thap", "bg-success");
                     %>
 
 
                     <div class="kanban-board">
                         <% for (String status : trangThaiLabels.keySet()) { 
                                String columnClass = "";
-                               if ("Chưa bắt đầu".equals(status)) columnClass = "not-started";
-                               else if ("Đang thực hiện".equals(status)) columnClass = "in-progress";
-                               else if ("Đã hoàn thành".equals(status)) columnClass = "completed";
-                               else if ("Trễ hạn".equals(status)) columnClass = "late";
+                               if ("ChuaBatDau".equals(status)) columnClass = "not-started";
+                               else if ("DangThucHien".equals(status)) columnClass = "in-progress";
+                               else if ("DaHoanThanh".equals(status)) columnClass = "completed";
+                               else if ("TreHan".equals(status)) columnClass = "late";
                         %>
                         <div class="kanban-col <%= columnClass %>">
                             <h5><%= trangThaiLabels.get(status) %></h5>
-                            <% if ("Chưa bắt đầu".equals(status)) { %>
+                            <% if ("ChuaBatDau".equals(status)) { %>
                             <button class="btn btn-outline-secondary kanban-add-btn" data-bs-toggle="modal"
                                     data-bs-target="#modalTask">
                                 <i class="fa-solid fa-plus"></i> Thêm task
@@ -404,7 +403,7 @@
                             <% for (Map<String, Object> task : taskList) {
                                    if (status.equals(task.get("trang_thai"))) {
                             %>
-                            <div class="kanban-task" data-bs-toggle="modal" data-bs-target="#modalTaskDetail" data-id="<%= task.get("id") %>">
+                            <div class="kanban-task" data-bs-toggle="modal" data-bs-target="#modalTaskDetail">
                                 <div class="task-title"><%= task.get("ten_cong_viec") %></div>
                                 <div class="task-meta">Người giao: <b><%= task.get("nguoi_giao_id") %></b> <br>Người nhận: <b><%= task.get("nguoi_nhan_id") %></b></div>
                                 <span class="task-priority badge <%= priorityBadge.getOrDefault(task.get("muc_do_uu_tien"), "bg-secondary") %>">
@@ -417,9 +416,9 @@
                                     <div class="progress-bar <%= badgeClass.getOrDefault(status, "bg-secondary") %>" style="width:
                                          <% 
                                              String percent = "0";
-                                             if ("Đang thực hiện".equals(status)) percent = "50";
-                                             else if ("Đã hoàn thành".equals(status)) percent = "100";
-                                             else if ("Trễ hạn".equals(status)) percent = "70";
+                                             if ("DangThucHien".equals(status)) percent = "50";
+                                             else if ("DaHoanThanh".equals(status)) percent = "100";
+                                             else if ("TreHan".equals(status)) percent = "70";
                                          %><%= percent %>%"></div>
                                 </div>
                                 <div class="task-actions">
@@ -432,10 +431,9 @@
                                         data-mo-ta="<%= task.get("mo_ta") %>"
                                         data-han="<%= task.get("han_hoan_thanh") %>"
                                         data-uu-tien="<%= task.get("muc_do_uu_tien") %>"
-                                        data-ten_nguoi_giao="<%= task.get("nguoi_giao_id") %>"
-                                        data-ten_nguoi_nhan="<%= task.get("nguoi_nhan_id") %>"
-                                        data-ten_nhom="<%= task.get("nhom_id") %>"
-                                        data-trang-thai="<%= task.get("trang_thai") %>"
+                                        data-nguoi_giao_id="<%= task.get("nguoi_giao_id") %>"
+                                        data-nguoi_nhan_id="<%= task.get("nguoi_nhan_id") %>"
+                                        data-nhom-id="<%= task.get("ten_nhom") %>"
                                         >
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
@@ -479,19 +477,19 @@
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Người giao</label>
-                                        <select class="form-select" name="ten_nguoi_giao" id="nguoiGiaoSelect">
+                                        <select class="form-select" name="nguoi_giao_id" id="nguoiGiaoSelect">
                                             <!-- AJAX load nhân viên -->
                                         </select>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Người nhận</label>
-                                        <select class="form-select" name="ten_nguoi_nhan" id="nguoiNhanSelect">
+                                        <select class="form-select" name="nguoi_nhan_id" id="nguoiNhanSelect">
                                             <!-- AJAX load nhân viên -->
                                         </select>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Nhóm công việc</label>
-                                        <select class="form-select" name="ten_nhom" id="nhomSelect">
+                                        <select class="form-select" name="nhom_id" id="nhomSelect">
                                             <!-- Sẽ được load từ API -->
                                         </select>
                                     </div>
@@ -502,7 +500,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary rounded-pill " id="btnInsertTask">Lưu</button>
+                                    <button type="submit" class="btn btn-primary rounded-pill">Lưu</button>
                                     <button type="button" class="btn btn-secondary rounded-pill"
                                             data-bs-dismiss="modal">Huỷ</button>
                                 </div>
@@ -514,115 +512,125 @@
                         <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title"><i class="fa-solid fa-info-circle"></i> Chi tiết công việc</h5>
+                                    <h5 class="modal-title"><i class="fa-solid fa-info-circle"></i> Chi tiết công
+                                        việc</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
                                     <ul class="nav nav-tabs mb-3" id="taskDetailTab" role="tablist">
                                         <li class="nav-item" role="presentation">
                                             <button class="nav-link active" id="tab-task-info" data-bs-toggle="tab"
-                                                    data-bs-target="#tabTaskInfo" type="button" role="tab">Thông tin</button>
+                                                    data-bs-target="#tabTaskInfo" type="button" role="tab">Thông
+                                                tin</button>
                                         </li>
                                         <li class="nav-item" role="presentation">
                                             <button class="nav-link" id="tab-task-progress" data-bs-toggle="tab"
-                                                    data-bs-target="#tabTaskProgress" type="button" role="tab">Tiến độ</button>
+                                                    data-bs-target="#tabTaskProgress" type="button" role="tab">Tiến
+                                                độ</button>
                                         </li>
                                         <li class="nav-item" role="presentation">
                                             <button class="nav-link" id="tab-task-history" data-bs-toggle="tab"
-                                                    data-bs-target="#tabTaskHistory" type="button" role="tab">Lịch sử</button>
+                                                    data-bs-target="#tabTaskHistory" type="button" role="tab">Lịch
+                                                sử</button>
                                         </li>
                                         <li class="nav-item" role="presentation">
                                             <button class="nav-link" id="tab-task-review" data-bs-toggle="tab"
-                                                    data-bs-target="#tabTaskReview" type="button" role="tab">Đánh giá</button>
+                                                    data-bs-target="#tabTaskReview" type="button" role="tab">Đánh
+                                                giá</button>
                                         </li>
                                     </ul>
 
                                     <div class="tab-content" id="taskDetailTabContent">
                                         <div class="tab-pane fade show active" id="tabTaskInfo" role="tabpanel">
-                                            <form id="formTaskDetail" enctype="multipart/form-data">
-                                                <input type="hidden" name="task_id" id="taskId">
-                                                <div class="mb-2">
-                                                    <label class="form-label"><b>Tên công việc:</b></label>
-                                                    <input type="text" class="form-control" name="ten_cong_viec">
-                                                </div>
-                                                <div class="mb-2">
-                                                    <label class="form-label"><b>Mô tả:</b></label>
-                                                    <textarea class="form-control" rows="3" name="mo_ta"></textarea>
-                                                </div>
-                                                <div class="mb-2">
-                                                    <label class="form-label"><b>Hạn hoàn thành:</b></label>
-                                                    <input type="date" class="form-control" name="han_hoan_thanh">
-                                                </div>
-                                                <div class="mb-2">
-                                                    <label class="form-label"><b>Mức độ ưu tiên:</b></label>
-                                                    <select class="form-select" name="muc_do_uu_tien">
-                                                        <option>Cao</option>
-                                                        <option>Trung bình</option>
-                                                        <option>Thấp</option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-2">
-                                                    <label class="form-label"><b>Người giao:</b></label>
-                                                    <select class="form-select" name="ten_nguoi_giao"></select>
-                                                </div>
-                                                <div class="mb-2">
-                                                    <label class="form-label"><b>Người nhận:</b></label>
-                                                    <select class="form-select" name="ten_nguoi_nhan"></select>
-                                                </div>
-                                                <div class="mb-2">
-                                                    <label class="form-label"><b>Nhóm:</b></label>
-                                                    <select class="form-select" name="ten_nhom"></select>
-                                                </div>
-                                                <div class="mb-2">
-                                                    <label class="form-label"><b>Trạng thái:</b></label>
-                                                    <select class="form-select" name="trang_thai">
-                                                        <option>Chưa bắt đầu</option>
-                                                        <option>Đang thực hiện</option>
-                                                        <option>Đã hoàn thành</option>
-                                                        <option>Trễ hạn</option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-2">
-                                                    <label for="taskAttachment" class="form-label"><b>File đính kèm:</b></label>
-                                                    <input type="file" class="form-control" id="taskAttachment" name="file_dinh_kem">
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                                    <button type="button" class="btn btn-primary" id="btnSaveTask">
-                                                        <i class="fa-solid fa-save"></i> Lưu
-                                                    </button>
-                                                </div>
-                                            </form>
+                                            <div class="mb-2">
+                                                <label class="form-label"><b>Tên công việc:</b></label>
+                                                <input type="text" class="form-control" value="Thiết kế giao diện">
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label"><b>Mô tả:</b></label>
+                                                <textarea class="form-control"
+                                                          rows="3">Thiết kế giao diện module nhân sự</textarea>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label"><b>Hạn hoàn thành:</b></label>
+                                                <input type="date" class="form-control" value="2024-06-10">
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label"><b>Mức độ ưu tiên:</b></label>
+                                                <select class="form-select">
+                                                    <option selected>Cao</option>
+                                                    <option>Trung bình</option>
+                                                    <option>Thấp</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label"><b>Người giao:</b></label>
+                                                <select class="form-select">
+                                                    <option selected>Admin</option>
+                                                    <option>Nguyễn Văn B</option>
+                                                    <option>Trần Thị C</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label"><b>Người nhận:</b></label>
+                                                <select class="form-select">
+                                                    <option selected>Nguyễn Văn A</option>
+                                                    <option>Trần Thị B</option>
+                                                    <option>Lê Văn C</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label"><b>Nhóm:</b></label>
+                                                <select class="form-select">
+                                                    <option selected>Sale & Marketing</option>
+                                                    <option>Nhân sự</option>
+                                                    <option>Kỹ Thuật</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label"><b>Trạng thái:</b></label>
+                                                <select class="form-select">
+                                                    <option selected>Chưa bắt đầu</option>
+                                                    <option>Đang làm</option>
+                                                    <option>Đã hoàn thành</option>
+                                                    <option>Hủy bỏ</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label for="taskAttachment" class="form-label"><b>File đính
+                                                        kèm:</b></label>
+                                                <input type="file" class="form-control" id="taskAttachment">
+                                            </div>
                                         </div>
 
                                         <div class="tab-pane fade" id="tabTaskProgress" role="tabpanel">
                                             <b>Tiến độ:</b>
                                             <div class="progress my-1">
-                                                <div class="progress-bar bg-warning" style="width: 0%" id="taskProgressBar"></div>
+                                                <div class="progress-bar bg-warning" style="width: 0%"
+                                                     id="taskProgressBar"></div>
                                             </div>
-                                            <button class="btn btn-outline-primary btn-sm mb-3" id="btnAddProcessStep">
+                                            <button class="btn btn-outline-primary btn-sm mb-3"
+                                                    id="btnAddProcessStep">
                                                 <i class="fa-solid fa-plus"></i> Thêm quy trình
                                             </button>
-                                            <ul id="processStepList" class="list-group mb-2"></ul>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                                <button type="button" class="btn btn-primary" id="////">
-                                                    <i class="fa-solid fa-save"></i> Lưu
-                                                </button>
-                                            </div>
+                                            <ul id="processStepList" class="list-group mb-2">
+                                                <!-- JS sẽ render các bước quy trình ở đây -->
+                                            </ul>
                                         </div>
 
                                         <div class="tab-pane fade" id="tabTaskHistory" role="tabpanel">
                                             <ul id="taskHistoryList">
                                                 <li>09/06/2024: Tạo công việc</li>
                                                 <li>10/06/2024: Cập nhật tiến độ 50%</li>
+                                                <!-- AJAX load từ cong_viec_lich_su -->
                                             </ul>
                                         </div>
 
                                         <div class="tab-pane fade" id="tabTaskReview" role="tabpanel">
                                             <form id="taskReviewForm" class="mb-3">
                                                 <div class="mb-2">
-                                                    <label for="reviewerName" class="form-label">Người đánh giá:</label>
+                                                    <label for="reviewerName" class="form-label">Người đánh
+                                                        giá:</label>
                                                     <input type="text" class="form-control" id="reviewerName"
                                                            placeholder="Nhập tên người đánh giá">
                                                 </div>
@@ -634,16 +642,20 @@
                                                 <button type="button" class="btn btn-success" id="btnAddReview">
                                                     <i class="fa-solid fa-plus"></i> Thêm đánh giá
                                                 </button>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                                    <button type="button" class="btn btn-primary" id="////">
-                                                        <i class="fa-solid fa-save"></i> Lưu
-                                                    </button>
-                                                </div>
                                             </form>
-                                            <ul id="taskReviewList"></ul>
+
+                                            <ul id="taskReviewList">
+                                                <!-- Danh sách đánh giá sẽ thêm vào đây -->
+                                            </ul>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Đóng</button>
+                                    <button type="button" class="btn btn-primary" id="btnSaveTask">
+                                        <i class="fa-solid fa-save"></i> Lưu
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -697,122 +709,78 @@
             </div>
         </div>
         //
-
-        <script>
-            // Hàm chọn option theo text
+        
+<!--        <script>
+            
+            // Hàm chọn option theo tên
             function selectOptionByText(selectEl, targetText) {
                 if (!selectEl || !targetText)
                     return;
                 const normalizedTarget = targetText.trim().toLowerCase();
                 const options = selectEl.options;
+
                 for (let i = 0; i < options.length; i++) {
-                    if (options[i].text.trim().toLowerCase() === normalizedTarget) {
+                    const optionText = options[i].text.trim().toLowerCase();
+                    if (optionText === normalizedTarget) {
                         selectEl.selectedIndex = i;
                         return;
                     }
                 }
-                selectEl.selectedIndex = -1; // Không tìm thấy
+                selectEl.selectedIndex = -1;
             }
 
             document.addEventListener("DOMContentLoaded", function () {
-                // Load nhóm công việc
                 fetch('./apiNhomCV')
                         .then(res => res.text())
                         .then(html => {
-                            document.querySelector('#modalTaskDetail select[name="ten_nhom"]').innerHTML = html;
-                            document.querySelector('#taskForm select[name="ten_nhom"]').innerHTML = html;
-                        });
-                // Load danh sách nhân viên (giao & nhận)
-                fetch('./apiNhanvien')
-                        .then(res => res.text())
-                        .then(html => {
-                            document.querySelector('#modalTaskDetail select[name="ten_nguoi_giao"]').innerHTML = html;
-                            document.querySelector('#modalTaskDetail select[name="ten_nguoi_nhan"]').innerHTML = html;
-                            document.querySelector('#taskForm select[name="ten_nguoi_giao"]').innerHTML = html;
-                            document.querySelector('#taskForm select[name="ten_nguoi_nhan"]').innerHTML = html;
+                            document.getElementById("nhomSelect").innerHTML = html;
                         });
             });
+
             document.addEventListener("DOMContentLoaded", function () {
-                const modal = document.getElementById("modalTaskDetail");
-                modal.addEventListener("show.bs.modal", function (event) {
-                    const button = event.relatedTarget;
-                    if (!button)
-                        return;
-                    // Lấy dữ liệu từ nút
-                    const id = button.getAttribute("data-id") || "";
-                    const tenCV = button.getAttribute("data-ten") || "";
-                    const moTa = button.getAttribute("data-mo-ta") || "";
-                    const hanHT = button.getAttribute("data-han") || "";
-                    const uuTien = button.getAttribute("data-uu-tien") || "";
-                    const nguoiGiao = button.getAttribute("data-ten_nguoi_giao") || "";
-                    const nguoiNhan = button.getAttribute("data-ten_nguoi_nhan") || "";
-                    const nhom = button.getAttribute("data-ten_nhom") || "";
-                    const trangthai = button.getAttribute("data-trang-thai") || "";
-                    // Gán dữ liệu
-                    modal.querySelector('[name="task_id"]').value = id;
-                    modal.querySelector('[name="ten_cong_viec"]').value = tenCV;
-                    modal.querySelector('[name="mo_ta"]').value = moTa;
-                    modal.querySelector('[name="han_hoan_thanh"]').value = hanHT;
-                    selectOptionByText(modal.querySelector('[name="muc_do_uu_tien"]'), uuTien);
-                    selectOptionByText(modal.querySelector('[name="ten_nguoi_giao"]'), nguoiGiao);
-                    selectOptionByText(modal.querySelector('[name="ten_nguoi_nhan"]'), nguoiNhan);
-                    selectOptionByText(modal.querySelector('[name="ten_nhom"]'), nhom);
-                    selectOptionByText(modal.querySelector('[name="trang_thai"]'), trangthai);
-                    // Mở lại tab đầu tiên khi show modal
-                    const tabTrigger = modal.querySelector('#tab-task-info');
-                    if (tabTrigger)
-                        new bootstrap.Tab(tabTrigger).show();
-                });
-            });
-        </script>
-        <script>
-            document.getElementById("btnInsertTask").addEventListener("click", function () {
-                const form = document.getElementById("taskForm");
-                const formData = new FormData(form); // tự động lấy tất cả input theo name, bao gồm file
+                const modalTask = document.getElementById("modalTask");
+                const form = modalTask.querySelector("form");
 
-                fetch("./themCongviec", {
-                    method: "POST",
-                    body: formData
-                })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                alert("Đã lưu thành công!");
-                                location.reload();
-                            } else {
-                                alert("Lỗi khi lưu: " + data.message);
-                            }
-                        })
-                        .catch(err => {
-                            console.error("Lỗi kết nối:", err);
-                            alert("Đã xảy ra lỗi!");
-                        });
-            });
-        </script>
-        <script>
-            document.getElementById("btnSaveTask").addEventListener("click", function () {
-                const form = document.getElementById("formTaskDetail");
-                const formData = new FormData(form); // tự động lấy tất cả input theo name, bao gồm file
+                // 1. Tải danh sách nhân viên
+                fetch('./apiNhanvien')
+                        .then(response => response.text())
+                        .then(html => {
+                            document.getElementById("nguoiGiaoSelect").innerHTML = html;
+                            document.getElementById("nguoiNhanSelect").innerHTML = html;
 
-                fetch("./suaCongviec", {
-                    method: "POST",
-                    body: formData
-                })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                alert("Đã lưu thành công!");
-                                location.reload();
-                            } else {
-                                alert("Lỗi khi lưu: " + data.message);
-                            }
+                            // 2. Gắn listener sau khi option đã sẵn sàng
+                            modalTask.addEventListener("show.bs.modal", function (event) {
+                                const button = event.relatedTarget;
+
+                                if (!button.classList.contains("btn-edit-task")) {
+                                    form.reset();
+                                    return;
+                                }
+
+                                form.reset(); // đảm bảo làm mới trước
+
+                                // Gán dữ liệu cơ bản
+                                form.querySelector('[name="id"]').value = button.getAttribute("data-id") || "";
+                                form.querySelector('[name="ten_cong_viec"]').value = button.getAttribute("data-ten") || "";
+                                form.querySelector('[name="mo_ta"]').value = button.getAttribute("data-mo-ta") || "";
+                                form.querySelector('[name="han_hoan_thanh"]').value = button.getAttribute("data-han") || "";
+                                form.querySelector('[name="muc_do_uu_tien"]').value = button.getAttribute("data-uu-tien") || "TrungBinh";
+                                //form.querySelector('[name="nhom_id"]').value = button.getAttribute("data-nhom-id") || "";
+
+                                // Gán người giao / người nhận bằng tên
+                                const tenNguoiGiao = button.getAttribute("data-nguoi_giao_id") || "";
+                                const tenNguoiNhan = button.getAttribute("data-nguoi_nhan_id") || "";
+                                const tenNhom = button.getAttribute("data-nhom-id") || "";
+                                selectOptionByText(form.querySelector('[name="nguoi_giao_id"]'), tenNguoiGiao);
+                                selectOptionByText(form.querySelector('[name="nguoi_nhan_id"]'), tenNguoiNhan);
+                                selectOptionByText(form.querySelector('[name="nhom_id"]'), tenNhom);
+                            });
                         })
-                        .catch(err => {
-                            console.error("Lỗi kết nối:", err);
-                            alert("Đã xảy ra lỗi!");
-                        });
+                        .catch(err => console.error("Lỗi khi load danh sách nhân viên:", err));
             });
-        </script>
+        </script>-->
+
+
         <script>
             // Danh sách các bước quy trình (demo, nên dùng AJAX thực tế)
             var processSteps = [
@@ -858,30 +826,31 @@
                             badgeClass = "bg-warning text-dark";
                         else if (step.status === "Trễ hạn")
                             badgeClass = "bg-danger";
-
-                        // Nút chỉnh sửa
-                        var editBtn =
-                                '<button class="btn btn-sm btn-outline-secondary me-1" onclick="showEditStepModal(' + idx + ')">' +
-                                '<i class="fa-solid fa-pen"></i> Chỉnh sửa' +
-                                '</button>';
-
-                        // Nút xóa
-                        var deleteBtn =
-                                '<button class="btn btn-sm btn-danger ms-1" onclick="removeProcessStep(' + idx + ')">' +
-                                '<i class="fa-solid fa-trash"></i>' +
-                                '</button>';
-
-                        var html = '<li class="list-group-item d-flex justify-content-between align-items-center">' +
-                                '<div>' +
-                                '<b>' + step.name + '</b> ' +
-                                '<span class="badge ' + badgeClass + '">' + step.status + '</span><br>' +
-                                '<small>' + (step.desc ? step.desc : '') + '</small>' +
-                                '<div class="text-muted small">Từ ' + (step.start || '-') + ' đến ' + (step.end || '-') + '</div>' +
-                                '</div>' +
-                                '<div>' + editBtn + deleteBtn + '</div>' +
-                                '</li>';
-
-                        list.append(html);
+                        // Nút chỉnh sửa trạng thái
+                        var editBtn = `
+                    <button class="btn btn-sm btn-outline-secondary me-1" onclick="showEditStepModal(${idx})">
+                        <i class="fa-solid fa-pen"></i> Chỉnh sửa
+                    </button>
+                `;
+                        // Nút xóa luôn hiển thị
+                        var deleteBtn = `
+                    <button class="btn btn-sm btn-danger ms-1" onclick="removeProcessStep(${idx})">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                `;
+                        list.append(
+                                `<li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <b>${step.name}</b> <span class="badge ${badgeClass}">${step.status}</span><br>
+                            <small>${step.desc || ''}</small>
+                            <div class="text-muted small">Từ ${step.start || '-'} đến ${step.end || '-'}</div>
+                        </div>
+                        <div>
+            ${editBtn}
+            ${deleteBtn}
+                        </div>
+                    </li>`
+                                );
                     });
                 }
             }
@@ -908,8 +877,10 @@
                             </div>
                             <div class="mb-2">
                                 <label class="form-label">Trạng thái</label>
-                                <select class="form-select" name="stepStatus">
-                                    
+                                <select className="form-select" name="stepStatus" value={step.status}>
+                                    <option value="Chưa bắt đầu">Chưa bắt đầu</option>
+                                    <option value="Đang làm">Đang làm</option>
+                                    <option value="Hoàn thành">Hoàn thành</option>
                                 </select>
                             </div>
                             <div class="mb-2 row">
@@ -983,26 +954,8 @@
             $('#modalTaskDetail').on('show.bs.modal', function () {
                 renderProcessSteps();
             });
-
-            document.addEventListener("DOMContentLoaded", function () {
-                const tabProgress = document.getElementById("tab-task-progress");
-
-                tabProgress.addEventListener("shown.bs.tab", function () {
-                    const taskId = document.getElementById("taskId").value;
-
-                    $.ajax({
-                        url: './apiTaskSteps?task_id=' + taskId,
-                        method: 'GET',
-                        success: function (data) {
-                            processSteps = data;
-                            renderProcessSteps();
-                        },
-                        error: function () {
-                            alert("Không thể tải quy trình.");
-                        }
-                    });
-                });
-            });
         </script>
+
     </body>
+
 </html>

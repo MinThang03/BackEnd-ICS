@@ -404,7 +404,7 @@
                             <% for (Map<String, Object> task : taskList) {
                                    if (status.equals(task.get("trang_thai"))) {
                             %>
-                            <div class="kanban-task" data-bs-toggle="modal" data-bs-target="#modalTaskDetail">
+                            <div class="kanban-task" data-bs-toggle="modal" data-bs-target="#modalTaskDetail" data-id="<%= task.get("id") %>">
                                 <div class="task-title"><%= task.get("ten_cong_viec") %></div>
                                 <div class="task-meta">Người giao: <b><%= task.get("nguoi_giao_id") %></b> <br>Người nhận: <b><%= task.get("nguoi_nhan_id") %></b></div>
                                 <span class="task-priority badge <%= priorityBadge.getOrDefault(task.get("muc_do_uu_tien"), "bg-secondary") %>">
@@ -813,8 +813,8 @@
                         });
             });
         </script>
-
         <script>
+            // Danh sách các bước quy trình (demo, nên dùng AJAX thực tế)
             var processSteps = [
                 {
                     name: "Thiết kế UI",
@@ -830,9 +830,8 @@
                     start: "2024-06-04",
                     end: ""
                 }
+                // ...thêm bước khác nếu có...
             ];
-
-            const statusOptions = ["Chưa làm", "Đang làm", "Hoàn thành", "Trễ hạn"];
 
             function calcProgressPercent() {
                 if (!processSteps || processSteps.length === 0)
@@ -841,18 +840,13 @@
                 return Math.round((done / processSteps.length) * 100);
             }
 
+            // Hiển thị các bước quy trình với nút chỉnh sửa trạng thái (logic đẹp mắt, chỉ 1 nút)
             function renderProcessSteps() {
                 var percent = calcProgressPercent();
                 var barClass = percent === 100 ? "bg-success" : "bg-warning";
-                $('#taskProgressBar')
-                        .css('width', percent + '%')
-                        .removeClass('bg-warning bg-success')
-                        .addClass(barClass)
-                        .text(percent + '%');
-
+                $('#taskProgressBar').css('width', percent + '%').removeClass('bg-warning bg-success').addClass(barClass).text(percent + '%');
                 var list = $('#processStepList');
                 list.empty();
-
                 if (processSteps.length === 0) {
                     list.append('<li class="list-group-item text-muted">Chưa có bước quy trình nào.</li>');
                 } else {
@@ -865,43 +859,36 @@
                         else if (step.status === "Trễ hạn")
                             badgeClass = "bg-danger";
 
-                        var editBtn = `
-                    <button class="btn btn-sm btn-outline-secondary me-1" onclick="showEditStepModal(${idx})">
-                        <i class="fa-solid fa-pen"></i> Chỉnh sửa
-                    </button>
-                `;
-                        var deleteBtn = `
-                    <button class="btn btn-sm btn-danger ms-1" onclick="removeProcessStep(${idx})">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                `;
+                        // Nút chỉnh sửa
+                        var editBtn =
+                                '<button class="btn btn-sm btn-outline-secondary me-1" onclick="showEditStepModal(' + idx + ')">' +
+                                '<i class="fa-solid fa-pen"></i> Chỉnh sửa' +
+                                '</button>';
 
-                        list.append(`
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <b>${step.name}</b> <span class="badge ${badgeClass}">${step.status}</span><br>
-                            <small>${step.desc || ''}</small>
-                            <div class="text-muted small">Từ ${step.start || '-'} đến ${step.end || '-'}</div>
-                        </div>
-                        <div>
-            ${editBtn}
-            ${deleteBtn}
-                        </div>
-                    </li>
-                `);
+                        // Nút xóa
+                        var deleteBtn =
+                                '<button class="btn btn-sm btn-danger ms-1" onclick="removeProcessStep(' + idx + ')">' +
+                                '<i class="fa-solid fa-trash"></i>' +
+                                '</button>';
+
+                        var html = '<li class="list-group-item d-flex justify-content-between align-items-center">' +
+                                '<div>' +
+                                '<b>' + step.name + '</b> ' +
+                                '<span class="badge ' + badgeClass + '">' + step.status + '</span><br>' +
+                                '<small>' + (step.desc ? step.desc : '') + '</small>' +
+                                '<div class="text-muted small">Từ ' + (step.start || '-') + ' đến ' + (step.end || '-') + '</div>' +
+                                '</div>' +
+                                '<div>' + editBtn + deleteBtn + '</div>' +
+                                '</li>';
+
+                        list.append(html);
                     });
                 }
             }
 
+            // Modal chỉnh sửa trạng thái bước quy trình
             function showEditStepModal(idx) {
                 var step = processSteps[idx];
-
-                let statusOptionsHtml = "";
-                statusOptions.forEach(s => {
-                    const selected = (s.trim().toLowerCase() === step.status.trim().toLowerCase()) ? "selected" : "";
-                    statusOptionsHtml += `<option value="${s}" ${selected}>${s}</option>`;
-                });
-
                 var modalHtml = `
             <div class="modal fade" id="modalEditStepStatus" tabindex="-1">
                 <div class="modal-dialog">
@@ -922,7 +909,7 @@
                             <div class="mb-2">
                                 <label class="form-label">Trạng thái</label>
                                 <select class="form-select" name="stepStatus">
-            ${statusOptionsHtml}
+                                    
                                 </select>
                             </div>
                             <div class="mb-2 row">
@@ -944,12 +931,14 @@
                 </div>
             </div>
         `;
-
-                $('#modalEditStepStatus').remove(); // Remove old modal if exists
+                // Xóa modal cũ nếu có
+                $('#modalEditStepStatus').remove();
+                // Thêm modal vào body
                 $('body').append(modalHtml);
+                // Hiển thị modal
                 var modal = new bootstrap.Modal(document.getElementById('modalEditStepStatus'));
                 modal.show();
-
+                // Xử lý submit cập nhật
                 $('#formEditStepStatus').on('submit', function (e) {
                     e.preventDefault();
                     processSteps[idx] = {
@@ -962,8 +951,9 @@
                     renderProcessSteps();
                     modal.hide();
                     $('#modalEditStepStatus').remove();
+                    // TODO: AJAX cập nhật trạng thái bước quy trình cho công việc
                 });
-
+                // Khi đóng modal thì xóa khỏi DOM
                 $('#modalEditStepStatus').on('hidden.bs.modal', function () {
                     $('#modalEditStepStatus').remove();
                 });
@@ -973,12 +963,10 @@
                 processSteps.splice(idx, 1);
                 renderProcessSteps();
             };
-
             $('#btnAddProcessStep').on('click', function () {
                 $('#formAddProcessStep')[0].reset();
                 $('#modalAddProcessStep').modal('show');
             });
-
             $('#formAddProcessStep').on('submit', function (e) {
                 e.preventDefault();
                 var step = {
@@ -992,11 +980,29 @@
                 renderProcessSteps();
                 $('#modalAddProcessStep').modal('hide');
             });
-
             $('#modalTaskDetail').on('show.bs.modal', function () {
                 renderProcessSteps();
             });
-        </script>
 
+            document.addEventListener("DOMContentLoaded", function () {
+                const tabProgress = document.getElementById("tab-task-progress");
+
+                tabProgress.addEventListener("shown.bs.tab", function () {
+                    const taskId = document.getElementById("taskId").value;
+
+                    $.ajax({
+                        url: './apiTaskSteps?task_id=' + taskId,
+                        method: 'GET',
+                        success: function (data) {
+                            processSteps = data;
+                            renderProcessSteps();
+                        },
+                        error: function () {
+                            alert("Không thể tải quy trình.");
+                        }
+                    });
+                });
+            });
+        </script>
     </body>
 </html>

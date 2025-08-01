@@ -205,7 +205,7 @@
                         <a href="./dsnhanvien" class="active"><i class="fa-solid fa-users"></i><span>Nhân sự</span></a>
                     </li>
                     <li>
-                        <a href="task.jsp"><i class="fa-solid fa-tasks"></i><span>Công việc</span></a>
+                        <a href="./dsCongviec"><i class="fa-solid fa-tasks"></i><span>Công việc</span></a>
                     </li>
                     <li>
                         <a href="department.jsp"><i class="fa-solid fa-building"></i><span>Phòng ban</span></a>
@@ -249,17 +249,17 @@
                             <div class="col-md-2">
                                 <select class="form-select" id="filterStatus">
                                     <option value="">Tất cả trạng thái</option>
-                                    <option value="DangLam">Đang làm</option>
-                                    <option value="TamNghi">Tạm nghỉ</option>
-                                    <option value="NghiViec">Nghỉ việc</option>
+                                    <option value="Đang làm">Đang làm</option>
+                                    <option value="Tạm nghỉ">Tạm nghỉ</option>
+                                    <option value="Nghỉ việc">Nghỉ việc</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
                                 <select class="form-select" id="filterRole">
                                     <option value="">Tất cả quyền</option>
-                                    <option value="admin">Admin</option>
-                                    <option value="quanly">Quản lý</option>
-                                    <option value="nhanvien">Nhân viên</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Quản lý">Quản lý</option>
+                                    <option value="Nhân viên">Nhân viên</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -412,17 +412,17 @@
                                         <label class="form-label" title="Trạng thái làm việc">Trạng thái làm
                                             việc</label>
                                         <select class="form-select" id="empStatus" name="trang_thai_lam_viec">
-                                            <option value="DangLam" class="bg-success text-white">Đang làm</option>
-                                            <option value="TamNghi" class="bg-warning text-dark">Tạm nghỉ</option>
-                                            <option value="NghiViec" class="bg-danger text-white">Nghỉ việc</option>
+                                            <option value="Đang làm" class="bg-success text-white">Đang làm</option>
+                                            <option value="Tạm nghỉ" class="bg-warning text-dark">Tạm nghỉ</option>
+                                            <option value="Nghỉ việc" class="bg-danger text-white">Nghỉ việc</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label" title="Vai trò hệ thống">Vai trò</label>
                                         <select class="form-select" id="empRole" name="vai_tro">
-                                            <option value="admin" class="bg-danger text-white">Admin</option>
-                                            <option value="quanly" class="bg-warning text-dark">Quản lý</option>
-                                            <option value="nhanvien" class="bg-info text-dark">Nhân viên</option>
+                                            <option value="Admin" class="bg-danger text-white">Admin</option>
+                                            <option value="Quản lý" class="bg-warning text-dark">Quản lý</option>
+                                            <option value="Nhân viên" class="bg-info text-dark">Nhân viên</option>
                                         </select>
                                     </div>
                                     <div class="col-md-12">

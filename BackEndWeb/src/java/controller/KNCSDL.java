@@ -273,4 +273,12 @@ public class KNCSDL {
             stmt.executeUpdate();
         }
     }
+
+    public ResultSet getStepsRawByTaskId(String taskId) throws SQLException {
+        String sql = "SELECT ten_buoc, mo_ta, trang_thai, ngay_bat_dau, ngay_ket_thuc "
+                + "FROM cong_viec_quy_trinh WHERE cong_viec_id = ? ORDER BY ngay_bat_dau ASC";
+        PreparedStatement ps = cn.prepareStatement(sql);
+        ps.setString(1, taskId);
+        return ps.executeQuery();
+    }
 }
